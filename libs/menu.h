@@ -17,12 +17,12 @@ Nesta biblioteca estão as funções principais de exibição do menu inicial e 
 
 void printTitle() {
     FILE* title = fopen("../files/title.txt", "r");
-    char linha[90];
+    char linha[101];
 
     for (int i = 0; i < 8; i++) {
         if(feof(title))
             break;
-        fgets(linha, 180, title);
+        fgets(linha, 100, title);
         printf("%s", linha);
     }
 

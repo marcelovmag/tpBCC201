@@ -220,10 +220,10 @@ int manterOuRemover(Jogo* jogo, int manter) {
 
     // Função para os comandos manter e remover
 
-    char coordenadas[2], c;
 
-    limpaBuffer();
+    char comArgs[5], c;
 
+/*
     scanf("%c", &c); 
 
     int i = 0;
@@ -232,9 +232,20 @@ int manterOuRemover(Jogo* jogo, int manter) {
         scanf("%c", &c);
         i++;
     }
+*/
 
-    int m = charToInt(coordenadas[0]);
-    int n = charToInt(coordenadas[1]);
+    int m, n;
+
+    if (isdigit(comArgs[1]) && isdigit(comArgs[2]) && ((comArgs[3] == '\n'))) {
+        m = charToInt(comArgs[1]);
+        n = charToInt(comArgs[2]);
+        ungetc(comArgs[3], stdin);
+    }
+    else {
+        m = 0;
+        n = 0;
+        ungetc('\n', stdin);
+    }
 
     // Valida as coordenada do tabuleiro
     if (m < 1 || m >= jogo->n || n < 1 || n >= jogo->n)
@@ -324,8 +335,10 @@ void duranteJogo(Jogo* jogo) {
             default:
                 printf("\nComando inválido, tente novamente");
         }
+        
+        printf("\033[2J");
     }
-    printf("\033[2J");
+    
 }
 
 // *TODO: resolveJogo()
