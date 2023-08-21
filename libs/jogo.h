@@ -220,7 +220,6 @@ int manterOuRemover(Jogo* jogo, int manter) {
 
     // Função para os comandos manter e remover
 
-
     char comArgs[5], c;
 
 /*
