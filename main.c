@@ -15,12 +15,10 @@ int main() {
 
     Jogo jogo;
 
-    char escolha;
+    char escolha = 0;
     int isJogoUp = 0;
 
     printTitle();
-    telaDeInicio(&escolha);
-
 
     do
     {
@@ -31,20 +29,25 @@ int main() {
             case '1':
                 // TODO: novo jogo
                 isJogoUp = 1;
-                op1(&jogo);     
+                op1(&jogo, &isJogoUp);     
                 break;
             case '2':
                 // TODO: continuar jogo salvo em arquivo
                 break;
             case '3':
                 // TODO: continuar jogo atual
-                op3(isJogoUp, &jogo);
+                op3(&jogo, &isJogoUp);
                 break;
             case '4':
                 // TODO: exibir ranking
                 break;
         }
+        telaDeInicio(&escolha);
     } while (escolha != '0');
+
+    if(isJogoUp) {
+        liberaMatriz(jogo.tabuleiro, jogo.n);
+    }
     
     return 0;
 }

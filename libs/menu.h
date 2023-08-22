@@ -16,7 +16,7 @@ Nesta biblioteca estão as funções principais de exibição do menu inicial e 
 
 
 void printTitle() {
-    FILE* title = fopen("../files/title.txt", "r");
+    FILE* title = fopen("./files/title.txt", "r");
     char linha[101];
 
     for (int i = 0; i < 8; i++) {
@@ -40,27 +40,30 @@ void telaDeInicio(char* escolha) {
     // Exibe o menu principal
     printaMenu();
 
-    limpaBuffer();
-    
     // Lê e trata a escolha do usuário
     scanf("%c", escolha);
     while (*escolha != '0' && *escolha != '1' && *escolha != '2' && *escolha != '3' && *escolha != '4') {
+        printf("\033[2J");
         printf("\nTente escolher uma opção válida.");
         printaMenu();
+
         scanf("%c", escolha);
     }
 }
 
 
-void op1(Jogo* jogo) {
+void op1(Jogo* jogo, int* isJogoUp) {
     // Opção 1: Novo jogo
 
     char tam, dif;
 
+    printf("\nNome do jogador: ");
+    limpaBuffer();
+    fgets(jogo->nome, 50, stdin);
+
     // Recebe e verifica o valor do tamanho do tabuleiro
     while (1) {
         printf("\nTamanho do tabuleiro (3 a 9): ");
-        limpaBuffer();
         scanf("%c", &tam);
 
         if(tam == '3' || tam == '4' || tam == '5' || tam == '6' || tam == '7' || tam == '8' || tam == '9')
@@ -72,24 +75,40 @@ void op1(Jogo* jogo) {
     // Verifica se o tamanho permite uma dificuldade além de fácil
     if(tam != '3' && tam != '4') {
 
-        // Recebe e verifica o valor da dificuldade
-        while (1) {
-            printf("\nDificuldade (Fácil, Médio ou Difícil): ");
-            limpaBuffer();
-            scanf("%c", &dif);
+        if(tam == '5' || tam == '6') {
+            // Recebe e verifica o valor da dificuldade
+            while (1) {
+                printf("\nDificuldade (Fácil ou Média): ");
+                limpaBuffer();
+                scanf("%c", &dif);
 
-            if(dif == 'F' || dif == 'M' || dif == 'D')
-                break;
+                if(dif == 'F' || dif == 'M')
+                    break;
 
-            printf("\nOpção inválida! [Dica: tente usar F, M ou D]");
+                printf("\nOpção inválida! [Dica: tente usar F ou M]");
+            }
+        }
+        else {
+            // Recebe e verifica o valor da dificuldade
+            while (1) {
+                printf("\nDificuldade (Fácil, Médio ou Difícil): ");
+                limpaBuffer();
+                scanf("%c", &dif);
+
+                if(dif == 'F' || dif == 'M' || dif == 'D')
+                    break;
+
+                printf("\nOpção inválida! [Dica: tente usar F, M ou D]");
+            }
         }
     }
 
     jogo->n = charToInt(tam);
     jogo->dif = dif;
-    jogo->tabuleiro = criaTabuleiro(jogo->n);
+    jogo->tabuleiro = criaTabuleiro(jogo->n, jogo->dif);
 
-    duranteJogo(jogo);
+    duranteJogo(jogo, isJogoUp);
+    printTitle();
 }
 
 
@@ -97,8 +116,8 @@ void op2() {
     char nomeArquivo[MAX];
 
     printf("\nInforme o nome do arquivo com o jogo salvo: ");
-    limpaBuffer();
     fgets(nomeArquivo, MAX, stdin);
+    limpaBuffer();
 
     FILE* arquivo = fopen(nomeArquivo, "r");
 
@@ -108,9 +127,11 @@ void op2() {
 }
 
 
-void op3(int valida, Jogo* jogo) {
-    if (valida) {
-        /* TODO: op3 */
+void op3(Jogo* jogo, int* isJogoUp) {
+    if (*isJogoUp) {
+        printf("\033[2J");
+        duranteJogo(jogo, isJogoUp);
+        printTitle();
     }
     else 
         printf("\nNão há nenhum jogo em aberto. Tente começar um novo jogo.");
