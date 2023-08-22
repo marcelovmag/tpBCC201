@@ -9,6 +9,7 @@ Nesta biblioteca estão as principais funções que fazem o jogo funcionar e as 
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 #include "cores.h"
 
@@ -139,22 +140,25 @@ Elemento** criaTabuleiro (int n) {
 
 // *TODO: imprimeTabuleiro
 void imprimeTabuleiro (Elemento** tab, int n) {
-    printf("\n");
+    printf("\n" TAB_TL);
+    for (int j = 0; j < n-1; j++)
+            printf(TAB_HOR TAB_TJ);
+    printf(TAB_HOR TAB_TR);
+    
     for (int i = 0; i < n+1; i++)
     {
-        // printf("");
         for (int j = 0; j < n; j++)
         {   
             switch (tab[i][j].cor) {
 
                 case 0:
-                    printf(RED(TAB_VER "%d"), tab[i][j].num);
+                    printf(TAB_VER RED("%d"), tab[i][j].num);
                     break;
                 case 1:
-                    printf(GREEN(TAB_VER "%d"), tab[i][j].num);
+                    printf(TAB_VER GREEN("%d"), tab[i][j].num);
                     break;
                 case 2:
-                    printf(BOLD(TAB_VER "%d"), tab[i][j].num);
+                    printf(TAB_VER BOLD("%d"), tab[i][j].num);
                     break;
                 default:
                     printf(TAB_VER "%d", tab[i][j].num);
@@ -220,20 +224,10 @@ int manterOuRemover(Jogo* jogo, int manter) {
 
     // Função para os comandos manter e remover
 
-    char comArgs[5], c;
-
-/*
-    scanf("%c", &c); 
-
-    int i = 0;
-    while (((c != ' ') && (c != '\n')) && (i != 2)){
-        coordenadas[i] = c;
-        scanf("%c", &c);
-        i++;
-    }
-*/
-
+    char comArgs[5];
     int m, n;
+
+    fgets(comArgs, 5, stdin);
 
     if (isdigit(comArgs[1]) && isdigit(comArgs[2]) && ((comArgs[3] == '\n'))) {
         m = charToInt(comArgs[1]);
@@ -247,7 +241,7 @@ int manterOuRemover(Jogo* jogo, int manter) {
     }
 
     // Valida as coordenada do tabuleiro
-    if (m < 1 || m >= jogo->n || n < 1 || n >= jogo->n)
+    if (m < 1 || m > jogo->n || n < 1 || n > jogo->n)
         return 1;
 
 
@@ -311,16 +305,24 @@ void duranteJogo(Jogo* jogo) {
 
         switch(saida) {
             case 1:
-                if (manterOuRemover(jogo, 1))
+                if (manterOuRemover(jogo, 1)) {
+                    printf("\033[2J");
                     printf("\nComando inválido, tente novamente");
+                }
                 else if(confereSomas(jogo))
                     jogoGanho();
+                else
+                    printf("\033[2J");
                 break;
             case 2:
-                if (manterOuRemover(jogo, 0))
+                if (manterOuRemover(jogo, 0)) {
+                    printf("\033[2J");
                     printf("\nComando inválido, tente novamente");
-                else if(confereSomas(jogo))
+                }
+                else if(confereSomas(jogo)) {
+                    printf("\033[2J");
                     jogoGanho();
+                }
                 break;
             case 3:
 
@@ -332,10 +334,9 @@ void duranteJogo(Jogo* jogo) {
 
                 break;
             default:
+                printf("\033[2J");
                 printf("\nComando inválido, tente novamente");
         }
-        
-        printf("\033[2J");
     }
     
 }
